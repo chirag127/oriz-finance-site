@@ -1,5 +1,8 @@
 # Oriz Paisa — Finance tools
 
+[![Stars](https://img.shields.io/github/stars/chirag127/finance?style=flat)](https://github.com/chirag127/finance/stargazers) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+
 > SIP, EMI, FIRE, tax — calculators that show the math, run in your browser, and never see your inputs.
 
 **Live at**: https://finance.oriz.in · **Status**: production
