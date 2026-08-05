@@ -6,6 +6,15 @@ import type { ReactNode } from 'react'
  * a sign-in on any oriz site carries across every subdomain. PUBLIC content
  * is NEVER gated; Clerk only gates the "save scenario" personal feature.
  *
+ * Astro islands are independent React roots but share the SAME bundled
+ * @clerk/clerk-react module, whose "max allowed instances" guard is a
+ * module-level counter. Two islands each mounting <ClerkProvider> trips it and
+ * throws "multiple <ClerkProvider>", which cascades and aborts sibling islands'
+ * hydration (e.g. the SIP calculator). Fix: at most ONE Clerk island mounts per
+ * page — the header carries a plain /account link (no provider), so the only
+ * provider on a page is the page-specific gated surface (SaveScenario on a
+ * calculator page, ClerkAccountPanel on /account).
+ *
  * Appearance themed to the Engineering-Print Ledger: cool drafting paper,
  * graphite ink, graph-teal credit accent, oxblood danger, square corners,
  * mono figures.
