@@ -1,11 +1,12 @@
 ---
 /*
- * Home — the desk-calculator's cover sheet.
+ * Home — the drafting sheet's title block + plotted hero.
  *
- * Hero THESIS: the live SIP printing onto a paper tally-roll (the most
- * characteristic artifact of the Indian shop-accountant). Below it, the
- * catalogue reads as a key-register: 28 calculators across 4 ledgers, each a
- * struck key with a live/soon plate.
+ * Hero THESIS: the live SIP plotted as a growth curve on graph paper (the most
+ * characteristic artifact of a quantitative India-finance world — money
+ * compounding, drawn and dimensioned like engineering print). Below it, the
+ * catalogue reads as a bill-of-materials: 28 calculators across 4 sheets, each
+ * a numbered part with a live/soon status stamp.
  */
 import InlineSIPCalculator from '~/components/InlineSIPCalculator.tsx'
 import BaseLayout from '~/layouts/BaseLayout.astro'
@@ -25,16 +26,14 @@ const jsonLd = {
 ---
 
 <BaseLayout jsonLd={jsonLd}>
-  {/* ── Hero — masthead + live tape ── */}
-  <section class="spine hero" aria-label="Ready Reckoner">
-    <p class="hero-eyebrow mono">The Ready Reckoner · finance.oriz.in</p>
-    <h1 class="hero-h">
-      Type it.<br />Watch it print.
-    </h1>
+  {/* ── Hero — title block + plotted curve ── */}
+  <section class="spine hero" aria-label="Engineering-Print Ledger">
+    <p class="hero-eyebrow mono">Sheet 00 · finance.oriz.in · India personal-finance</p>
+    <h1 class="hero-h">The math,<br />plotted.</h1>
     <p class="hero-sub">
       <span class="num">{CALCULATORS.length}</span> personal-finance calculators for India —
-      SIP, EMI, FIRE, FD, PPF, NPS, HRA, TDS, take-home. Every figure computes on the tape as
-      you type. No sign-up, no advisor pitch, no numbers leaving your device.
+      SIP, EMI, FIRE, FD, PPF, NPS, HRA, TDS, take-home. Each one draws the result on graph
+      paper as you type. No sign-up, no advisor pitch, no numbers leaving your device.
     </p>
 
     <InlineSIPCalculator client:idle />
@@ -42,25 +41,26 @@ const jsonLd = {
 
   <hr class="hairline" />
 
-  {/* ── Index — the key-register ── */}
-  <section id="index" class="spine reg" aria-label="Calculator register">
+  {/* ── Index — the bill-of-materials ── */}
+  <section id="index" class="spine reg" aria-label="Calculator index">
     <div class="reg-head">
-      <h2 class="reg-h mono">Register</h2>
+      <h2 class="reg-h mono">Bill of materials</h2>
       <p class="reg-count mono">
-        <span class="num">{liveCount}</span>/<span class="num">{CALCULATORS.length}</span> keys live
+        <span class="num">{liveCount}</span>/<span class="num">{CALCULATORS.length}</span> parts drawn
       </p>
     </div>
 
     {LEDGERS.map((ledger, li) => (
       <div class="reg-ledger">
         <h3 class="reg-ledger-h">
-          <span class="reg-ledger-no mono">L{String(li + 1).padStart(2, '0')}</span>
+          <span class="reg-ledger-no mono">SH-{String(li + 1).padStart(2, '0')}</span>
           {ledger.label}
         </h3>
         <ul class="reg-keys">
-          {CALCULATORS.filter((c) => c.ledger === ledger.key).map((c) => (
+          {CALCULATORS.filter((c) => c.ledger === ledger.key).map((c, ci) => (
             <li>
               <a class="key-row" href={`/calculators/${c.slug}/`}>
+                <span class="key-no mono">{String(li + 1)}.{String(ci + 1).padStart(2, '0')}</span>
                 <span class="key-name">{c.name}</span>
                 <span class="key-brief">{c.brief}</span>
                 <span class={`key-plate mono ${c.live ? 'is-live' : ''}`}>{c.live ? 'live' : 'soon'}</span>
@@ -76,12 +76,12 @@ const jsonLd = {
 
   {/* ── Colophon ── */}
   <section class="spine note" aria-label="How this works">
-    <h2 class="note-h mono">On the machine</h2>
+    <h2 class="note-h mono">Drawing notes</h2>
     <div class="note-prose">
       <p>
-        Every calculator runs in your browser — the formula, the year-by-year
-        breakdown, all of it client-side. Inputs never leave your device.
-        Sign-in is optional and only unlocks saving a scenario to re-open on
+        Every calculator computes in your browser — the formula, the year-by-year
+        breakdown, the plotted curve, all of it client-side. Inputs never leave your
+        device. Sign-in is optional and only unlocks saving a scenario to re-open on
         another device; it works across every oriz site.
       </p>
       <p>
@@ -105,12 +105,11 @@ const jsonLd = {
   }
   .hero-h {
     font-family: var(--font-display);
-    font-weight: 800;
-    font-stretch: expanded;
+    font-weight: 700;
     text-transform: uppercase;
-    font-size: clamp(2.4rem, 8vw, 5rem);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
+    font-size: clamp(2.6rem, 9vw, 5.5rem);
+    line-height: 0.9;
+    letter-spacing: 0.01em;
     color: var(--ink);
     margin: 0 0 1.25rem;
   }
@@ -122,14 +121,14 @@ const jsonLd = {
     max-width: 60ch;
   }
 
-  /* ── Register ── */
+  /* ── Bill of materials ── */
   .reg { padding-block: clamp(2rem, 5vw, 3rem); }
   .reg-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
-    border-bottom: 2px solid var(--rule);
+    border-bottom: 2px solid var(--credit);
     padding-bottom: 0.6rem;
   }
   .reg-h, .reg-count {
@@ -144,11 +143,10 @@ const jsonLd = {
   .reg-ledger-h {
     font-family: var(--font-display);
     font-weight: 700;
-    font-stretch: expanded;
     text-transform: uppercase;
-    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-size: clamp(1.25rem, 2.4vw, 1.6rem);
     color: var(--ink);
-    letter-spacing: -0.005em;
+    letter-spacing: 0.01em;
     margin: 0 0 0.75rem;
     display: flex;
     align-items: baseline;
@@ -173,22 +171,28 @@ const jsonLd = {
   }
   .key-row {
     display: grid;
-    grid-template-columns: 1fr max-content;
-    grid-template-areas: 'name plate' 'brief plate';
+    grid-template-columns: max-content 1fr max-content;
+    grid-template-areas: 'no name plate' 'no brief plate';
     align-items: center;
     gap: 0 0.75rem;
     padding: 0.55rem 0.75rem;
     background: var(--tape);
     border: 1px solid var(--rule);
-    border-bottom-width: 2px;
-    border-radius: 4px;
+    border-left: 3px solid var(--rule);
   }
   .key-row:hover {
-    border-color: var(--credit);
+    border-left-color: var(--credit);
     background: color-mix(in oklab, var(--credit) 6%, var(--tape));
   }
   .key-row:focus-visible { outline: 2px solid var(--credit); outline-offset: 2px; }
-  .key-name { grid-area: name; font-weight: 700; font-size: 15px; color: var(--ink); }
+  .key-no {
+    grid-area: no;
+    font-size: 11px;
+    color: var(--ink-mute);
+    letter-spacing: 0.04em;
+    align-self: center;
+  }
+  .key-name { grid-area: name; font-weight: 600; font-size: 15px; color: var(--ink); }
   .key-brief { grid-area: brief; font-size: 12px; color: var(--ink-mute); line-height: 1.35; }
   .key-plate {
     grid-area: plate;
@@ -198,11 +202,10 @@ const jsonLd = {
     color: var(--ink-mute);
     border: 1px solid var(--rule);
     padding: 0.15rem 0.4rem;
-    border-radius: 2px;
   }
   .key-plate.is-live { color: var(--credit); border-color: color-mix(in oklab, var(--credit) 50%, var(--rule)); }
 
-  /* ── Colophon ── */
+  /* ── Drawing notes ── */
   .note { padding-block: clamp(2rem, 5vw, 3rem) 2rem; }
   .note-h {
     font-family: var(--font-mono);

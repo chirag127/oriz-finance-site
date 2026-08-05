@@ -95,9 +95,9 @@ export default function ClerkAccountPanel() {
         .ap-heading {
           font-family: var(--font-display);
           font-weight: 700;
-          font-stretch: expanded;
           text-transform: uppercase;
-          font-size: 1.25rem;
+          font-size: 1.4rem;
+          letter-spacing: 0.01em;
           color: var(--ink);
           margin: 0 0 0.75rem;
         }

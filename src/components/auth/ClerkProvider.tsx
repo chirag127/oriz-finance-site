@@ -6,8 +6,9 @@ import type { ReactNode } from 'react'
  * a sign-in on any oriz site carries across every subdomain. PUBLIC content
  * is NEVER gated; Clerk only gates the "save scenario" personal feature.
  *
- * Appearance themed to the Ready Reckoner: manila paper, graphite ink, teal
- * credit accent, oxblood danger, square-ish corners, mono figures.
+ * Appearance themed to the Engineering-Print Ledger: cool drafting paper,
+ * graphite ink, graph-teal credit accent, oxblood danger, square corners,
+ * mono figures.
  */
 
 const publishableKey =
@@ -15,47 +16,47 @@ const publishableKey =
 
 const appearance = {
   variables: {
-    colorPrimary: '#0b6e63',
-    colorText: '#23262b',
-    colorTextSecondary: '#6a6d66',
-    colorBackground: '#f7f4ea',
-    colorInputBackground: '#f2efe6',
-    colorInputText: '#23262b',
-    colorDanger: '#8e2a2a',
-    borderRadius: '3px',
-    fontFamily: "'Public Sans', system-ui, sans-serif",
+    colorPrimary: '#0e7c6b',
+    colorText: '#17211e',
+    colorTextSecondary: '#5c6b64',
+    colorBackground: '#f4f7f4',
+    colorInputBackground: '#e2e8e4',
+    colorInputText: '#17211e',
+    colorDanger: '#9b2d24',
+    borderRadius: '0px',
+    fontFamily: "'IBM Plex Sans', system-ui, sans-serif",
   },
   elements: {
     card: {
-      backgroundColor: '#f7f4ea',
-      border: '1px solid #cabf9f',
-      boxShadow: '0 1px 2px rgba(35,38,43,0.08)',
-      borderRadius: '4px',
+      backgroundColor: '#f4f7f4',
+      border: '1px solid #b7c4bd',
+      boxShadow: '0 1px 2px rgba(23,33,30,0.08)',
+      borderRadius: '0px',
     },
     headerTitle: {
-      fontFamily: "'Archivo Expanded', 'Archivo', system-ui, sans-serif",
+      fontFamily: "'Saira Condensed', 'Arial Narrow', system-ui, sans-serif",
       fontWeight: '700',
       textTransform: 'uppercase',
-      letterSpacing: '-0.01em',
-      color: '#23262b',
+      letterSpacing: '0.01em',
+      color: '#17211e',
     },
-    headerSubtitle: { color: '#6a6d66' },
+    headerSubtitle: { color: '#5c6b64' },
     formButtonPrimary: {
-      backgroundColor: '#0b6e63',
-      color: '#f2efe6',
+      backgroundColor: '#0e7c6b',
+      color: '#eef2ef',
       fontWeight: '600',
-      borderRadius: '3px',
+      borderRadius: '0px',
       textTransform: 'none',
     },
     formFieldInput: {
-      backgroundColor: '#f2efe6',
-      borderColor: '#cabf9f',
-      color: '#23262b',
-      fontFamily: "'Spline Sans Mono', ui-monospace, monospace",
+      backgroundColor: '#e2e8e4',
+      borderColor: '#b7c4bd',
+      color: '#17211e',
+      fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
     },
-    formFieldLabel: { color: '#23262b' },
-    footerActionLink: { color: '#0b6e63' },
-    identityPreviewEditButton: { color: '#0b6e63' },
+    formFieldLabel: { color: '#17211e' },
+    footerActionLink: { color: '#0e7c6b' },
+    identityPreviewEditButton: { color: '#0e7c6b' },
     logoBox: { height: '26px' },
   },
 } as const
