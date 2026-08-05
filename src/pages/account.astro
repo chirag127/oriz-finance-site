@@ -1,13 +1,12 @@
 ---
-import AccountPanel from '~/components/AccountPanel.tsx'
 /*
- * /account — sign-in / sign-out via Firebase Auth.
- * The AccountPanel island uses `data-oriz-account-*` selector hooks; styling
- * lives in src/styles/oriz-ui-overrides.css.
+ * /account — Clerk sign-in + saved scenarios (Firestore, keyed by Clerk id).
+ * Every calculator is fully usable without an account; this is the only gated
+ * surface. One sign-in works across every oriz site.
  */
+import ClerkAccountPanel from '~/components/ClerkAccountPanel.tsx'
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import { SITE_CONFIG } from '~/lib/siteConfig'
-import '~/lib/firebase'
 ---
 
 <BaseLayout
@@ -19,12 +18,16 @@ import '~/lib/firebase'
     <p class="eyebrow"><a href="/">finance</a> / account</p>
     <h1>Account</h1>
     <p class="lede">
-      One sign-in works across every oriz site. Saved scenarios and
-      bookmarks follow you.
+      The calculators need no account. Sign in only to save a scenario and
+      re-open it anywhere — one account across every oriz site.
     </p>
   </header>
 
-  <section class="prose-spine">
-    <AccountPanel client:load siteName={SITE_CONFIG.name} />
+  <section class="prose-spine acct">
+    <ClerkAccountPanel client:only="react" />
   </section>
 </BaseLayout>
+
+<style>
+  .acct { padding-block: 2rem 4rem; }
+</style>

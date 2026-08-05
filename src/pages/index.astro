@@ -1,15 +1,18 @@
 ---
-import InlineSIPCalculator from '~/components/InlineSIPCalculator.tsx'
 /*
- * Home — folio strip + headline + inline live SIP calculator + leader-dotted
- * catalogue of all 28 calculators across 4 ledgers.
+ * Home — the desk-calculator's cover sheet.
  *
- * The page IS a ledger sheet. The grid is the chrome; the dotted leaders are
- * the index; the double rule is the sum.
+ * Hero THESIS: the live SIP printing onto a paper tally-roll (the most
+ * characteristic artifact of the Indian shop-accountant). Below it, the
+ * catalogue reads as a key-register: 28 calculators across 4 ledgers, each a
+ * struck key with a live/soon plate.
  */
+import InlineSIPCalculator from '~/components/InlineSIPCalculator.tsx'
 import BaseLayout from '~/layouts/BaseLayout.astro'
 import { CALCULATORS, LEDGERS } from '~/lib/catalogue'
 import { SITE_CONFIG } from '~/lib/siteConfig'
+
+const liveCount = CALCULATORS.filter((c) => c.live).length
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -22,52 +25,46 @@ const jsonLd = {
 ---
 
 <BaseLayout jsonLd={jsonLd}>
-  {/* ── Hero — Fraunces 64px headline + Source Sans lede ── */}
-  <section class="spine hero" aria-label="Folio of calculators">
-    <h1 class="hero-h">Calculators that show the math.</h1>
+  {/* ── Hero — masthead + live tape ── */}
+  <section class="spine hero" aria-label="Ready Reckoner">
+    <p class="hero-eyebrow mono">The Ready Reckoner · finance.oriz.in</p>
+    <h1 class="hero-h">
+      Type it.<br />Watch it print.
+    </h1>
     <p class="hero-sub">
-      A folio of <span class="num">28</span> calculators for Indian money — SIP, EMI,
-      FIRE, FD, RD, PPF, NPS, HRA, TDS, take-home. No popups. No advisor CTA. Inputs
-      never leave your device.
+      <span class="num">{CALCULATORS.length}</span> personal-finance calculators for India —
+      SIP, EMI, FIRE, FD, PPF, NPS, HRA, TDS, take-home. Every figure computes on the tape as
+      you type. No sign-up, no advisor pitch, no numbers leaving your device.
     </p>
-  </section>
 
-  {/* ── Inline live SIP calculator ── */}
-  <section class="spine isip-section" aria-label="Live SIP calculator">
-    <h2 class="section-h mono">SIP — live</h2>
-    <p class="section-lede">
-      A taste. Type a monthly amount, expected return, and tenure; the corpus
-      updates as you type. The full ledger sits one click away.
-    </p>
     <InlineSIPCalculator client:idle />
   </section>
 
-  {/* ── Catalogue — leader-dotted TOC of every calculator ── */}
-  <section id="catalogue" class="spine cat" aria-label="Catalogue">
-    <h2 class="section-h mono">Catalogue</h2>
-    <p class="section-lede">
-      <span class="num">{CALCULATORS.length}</span> calculators across{' '}
-      <span class="num">{LEDGERS.length}</span> ledgers. The two-letter code on
-      the right of each row is `live` when the calculator is wired up;
-      otherwise `soon`.
-    </p>
+  <hr class="hairline" />
 
-    {LEDGERS.map((ledger) => (
-      <div class="cat-ledger">
-        <h3 class="cat-ledger-h">
-          <span class="cat-ledger-num mono">
-            {LEDGERS.findIndex((l) => l.key === ledger.key) + 1}.
-          </span>
+  {/* ── Index — the key-register ── */}
+  <section id="index" class="spine reg" aria-label="Calculator register">
+    <div class="reg-head">
+      <h2 class="reg-h mono">Register</h2>
+      <p class="reg-count mono">
+        <span class="num">{liveCount}</span>/<span class="num">{CALCULATORS.length}</span> keys live
+      </p>
+    </div>
+
+    {LEDGERS.map((ledger, li) => (
+      <div class="reg-ledger">
+        <h3 class="reg-ledger-h">
+          <span class="reg-ledger-no mono">L{String(li + 1).padStart(2, '0')}</span>
           {ledger.label}
         </h3>
-        <ul class="cat-list">
+        <ul class="reg-keys">
           {CALCULATORS.filter((c) => c.ledger === ledger.key).map((c) => (
             <li>
-              <a class="toc-row cat-row" href={c.live ? `/calculators/${c.slug}/` : `/calculators/${c.slug}/`}>
-                <span class="toc-name cat-name">{c.name}</span>
-                <span class="toc-value cat-status mono">{c.live ? 'live' : 'soon'}</span>
+              <a class="key-row" href={`/calculators/${c.slug}/`}>
+                <span class="key-name">{c.name}</span>
+                <span class="key-brief">{c.brief}</span>
+                <span class={`key-plate mono ${c.live ? 'is-live' : ''}`}>{c.live ? 'live' : 'soon'}</span>
               </a>
-              <p class="cat-brief">{c.brief}</p>
             </li>
           ))}
         </ul>
@@ -75,19 +72,21 @@ const jsonLd = {
     ))}
   </section>
 
-  {/* ── How this stays free ── */}
-  <section class="spine note" aria-label="How this stays free">
-    <h2 class="section-h mono">How this stays free</h2>
+  <hr class="hairline" />
+
+  {/* ── Colophon ── */}
+  <section class="spine note" aria-label="How this works">
+    <h2 class="note-h mono">On the machine</h2>
     <div class="note-prose">
       <p>
-        Every calculator runs in your browser. The math, the formula, the
-        year-by-year breakdown — all client-side. Inputs never leave your
-        device. Sign-in is optional and only unlocks the ability to save
-        scenarios across the oriz family of sites.
+        Every calculator runs in your browser — the formula, the year-by-year
+        breakdown, all of it client-side. Inputs never leave your device.
+        Sign-in is optional and only unlocks saving a scenario to re-open on
+        another device; it works across every oriz site.
       </p>
       <p>
-        Display ads on a few pages cover the domain renewal. Nothing is
-        gated. <a href="/legal/disclaimer/">Read the SEBI disclaimer →</a>
+        A couple of pages carry a display ad to cover the domain renewal.
+        Nothing is gated. <a href="/legal/disclaimer/">Read the SEBI disclaimer →</a>
       </p>
     </div>
   </section>
@@ -95,124 +94,130 @@ const jsonLd = {
 
 <style>
   .hero {
-    padding-block: clamp(3rem, 8vw, 4.5rem) clamp(1.5rem, 4vw, 2.25rem);
-    border-bottom: 1px solid var(--rule);
+    padding-block: clamp(2.5rem, 7vw, 4rem) clamp(2rem, 5vw, 3rem);
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin: 0 0 1rem;
   }
   .hero-h {
     font-family: var(--font-display);
-    font-weight: 500;
-    font-variation-settings: 'opsz' 144, 'SOFT' 100;
-    /* H1 only at 64px per the brief — small footprint, big presence. */
-    font-size: clamp(2.25rem, 6vw, 4rem);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+    font-weight: 800;
+    font-stretch: expanded;
+    text-transform: uppercase;
+    font-size: clamp(2.4rem, 8vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
     color: var(--ink);
-    margin: 0 0 1rem;
-    max-width: 18ch;
+    margin: 0 0 1.25rem;
   }
   .hero-sub {
-    font-size: 1.125rem;
-    line-height: 1.55;
-    color: var(--ink);
-    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--ink-mute);
+    margin: 0 0 2.25rem;
     max-width: 60ch;
   }
 
-  .isip-section {
-    padding-block: clamp(2rem, 5vw, 3rem);
-    border-bottom: 1px solid var(--rule);
-  }
-  .section-h {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--ink-mute);
-    font-weight: 500;
-    margin: 0 0 0.625rem;
-  }
-  .section-lede {
-    color: var(--ink-mute);
-    font-size: 0.9375rem;
-    margin: 0 0 1.5rem;
-    max-width: 64ch;
-  }
-
-  .cat {
-    padding-block: clamp(2rem, 5vw, 3rem);
-    border-bottom: 1px solid var(--rule);
-  }
-  .cat-ledger {
-    margin-top: 2rem;
-  }
-  .cat-ledger-h {
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-variation-settings: 'opsz' 60, 'SOFT' 50;
-    font-size: clamp(1.375rem, 2.5vw, 1.75rem);
-    color: var(--ink);
-    margin: 0 0 0.875rem;
-    line-height: 1.1;
-    letter-spacing: -0.005em;
+  /* ── Register ── */
+  .reg { padding-block: clamp(2rem, 5vw, 3rem); }
+  .reg-head {
     display: flex;
     align-items: baseline;
-    gap: 0.625rem;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 0.6rem;
   }
-  .cat-ledger-num {
-    font-size: 12px;
+  .reg-h, .reg-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
     color: var(--ink-mute);
-    font-weight: 500;
-    letter-spacing: 0.12em;
+    margin: 0;
   }
-  .cat-list {
+  .reg-ledger { margin-top: 2rem; }
+  .reg-ledger-h {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: expanded;
+    text-transform: uppercase;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    margin: 0 0 0.75rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+  }
+  .reg-ledger-no {
+    font-size: 11px;
+    color: var(--credit);
+    letter-spacing: 0.12em;
+    font-weight: 500;
+  }
+  .reg-keys {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.625rem 2rem;
+    gap: 0.5rem;
   }
   @media (min-width: 760px) {
-    .cat-list {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    .reg-keys { grid-template-columns: repeat(2, 1fr); gap: 0.5rem 1.5rem; }
   }
-  .cat-list li {
-    padding-block: 0.25rem;
+  .key-row {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    grid-template-areas: 'name plate' 'brief plate';
+    align-items: center;
+    gap: 0 0.75rem;
+    padding: 0.55rem 0.75rem;
+    background: var(--tape);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 4px;
   }
-  .cat-name {
-    font-weight: 600;
-    font-size: 16px;
+  .key-row:hover {
+    border-color: var(--credit);
+    background: color-mix(in oklab, var(--credit) 6%, var(--tape));
   }
-  .cat-status {
-    font-size: 10px;
+  .key-row:focus-visible { outline: 2px solid var(--credit); outline-offset: 2px; }
+  .key-name { grid-area: name; font-weight: 700; font-size: 15px; color: var(--ink); }
+  .key-brief { grid-area: brief; font-size: 12px; color: var(--ink-mute); line-height: 1.35; }
+  .key-plate {
+    grid-area: plate;
+    font-size: 9px;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.16em;
     color: var(--ink-mute);
+    border: 1px solid var(--rule);
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
   }
-  .cat-brief {
-    margin: 0.125rem 0 0;
-    color: var(--ink-mute);
-    font-size: 13px;
-    line-height: 1.45;
-  }
+  .key-plate.is-live { color: var(--credit); border-color: color-mix(in oklab, var(--credit) 50%, var(--rule)); }
 
-  .note {
-    padding-block: clamp(2rem, 5vw, 3rem) 2rem;
-  }
-  .note-prose p {
-    color: var(--ink);
-    line-height: 1.7;
+  /* ── Colophon ── */
+  .note { padding-block: clamp(2rem, 5vw, 3rem) 2rem; }
+  .note-h {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-mute);
     margin: 0 0 1rem;
-    max-width: 64ch;
   }
+  .note-prose p { color: var(--ink); line-height: 1.7; margin: 0 0 1rem; max-width: 64ch; }
   .note-prose a {
-    color: var(--accent);
+    color: var(--credit);
     text-decoration: underline;
-    text-decoration-color: color-mix(in oklab, var(--accent) 50%, transparent);
+    text-decoration-color: color-mix(in oklab, var(--credit) 50%, transparent);
     text-underline-offset: 3px;
   }
-  .note-prose a:hover {
-    text-decoration-color: var(--accent);
-  }
+  .note-prose a:hover { text-decoration-color: var(--credit); }
 </style>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="oriz finance">
+  <rect width="32" height="32" rx="4" fill="#f2efe6"/>
+  <rect x="4.5" y="4.5" width="23" height="23" rx="2.5" fill="none" stroke="#cabf9f" stroke-width="1"/>
+  <text x="16" y="15.5" text-anchor="middle" font-family="'Spline Sans Mono',ui-monospace,monospace" font-size="13" font-weight="600" fill="#23262b">₹</text>
+  <rect x="8" y="20" width="16" height="1.4" fill="#0b6e63"/>
+  <rect x="8" y="22.6" width="16" height="1.4" fill="#0b6e63"/>
+</svg>

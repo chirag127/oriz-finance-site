@@ -1,20 +1,25 @@
 ---
-const groups = [
-  { label: 'Calculators', items: [
-    { href: '/calculators/sip/', label: 'SIP' },
-    { href: '/calculators/emi/', label: 'EMI' },
-    { href: '/calculators/tax/', label: 'Income tax' },
-    { href: '/calculators/', label: 'All calculators' },
-  ]},
-  { label: 'Markets', items: [
-    { href: '/fii-dii/', label: 'FII / DII activity' },
-    { href: '/mmi/', label: 'Market Mood Index' },
-  ]},
-  { label: 'Guides', items: [
-    { href: '/credit-cards/', label: 'Credit cards' },
-    { href: '/razorpay/', label: 'Razorpay guides' },
-  ]},
-  { label: 'Account', items: [{ href: '/settings/', label: 'Settings' }]},
-]
+import { CALCULATORS, LEDGERS } from '~/lib/catalogue'
 ---
-{groups.map(g => (<section><h3>{g.label}</h3><ul>{g.items.map(i => <li><a href={i.href}>{i.label}</a></li>)}</ul></section>))}
+{
+  LEDGERS.map((l) => (
+    <section>
+      <h3>{l.label}</h3>
+      <ul>
+        {CALCULATORS.filter((c) => c.ledger === l.key).map((c) => (
+          <li>
+            <a href={`/calculators/${c.slug}/`}>{c.name}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+}
+<section>
+  <h3>Reference</h3>
+  <ul>
+    <li><a href="/about/">About</a></li>
+    <li><a href="/account/">Account</a></li>
+    <li><a href="/legal/disclaimer/">SEBI disclaimer</a></li>
+  </ul>
+</section>

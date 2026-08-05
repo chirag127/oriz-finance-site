@@ -1,5 +1,6 @@
 ---
 import SIPCalculator from '~/components/calculators/SIPCalculator.tsx'
+import SaveScenario from '~/components/SaveScenario.tsx'
 /*
  * /calculators/[slug] — calculator detail page.
  *
@@ -608,6 +609,9 @@ const runBody = spec ? spec.run : ''
     {calc.live && calc.slug === 'sip' && (
       <section class="calc-body" aria-label="SIP calculator">
         <SIPCalculator client:idle />
+        <div class="calc-save">
+          <SaveScenario client:only="react" slug="sip" name="SIP" storageKey="oriz:finance:sip" />
+        </div>
       </section>
     )}
 
@@ -781,11 +785,12 @@ const runBody = spec ? spec.run : ''
   }
   .calc-h {
     font-family: var(--font-display);
-    font-weight: 500;
-    font-variation-settings: 'opsz' 144, 'SOFT' 100;
-    font-size: clamp(2rem, 4.5vw, 2.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+    font-weight: 800;
+    font-stretch: expanded;
+    text-transform: uppercase;
+    font-size: clamp(1.9rem, 4.5vw, 2.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
     color: var(--ink);
     margin: 0;
   }
@@ -808,6 +813,11 @@ const runBody = spec ? spec.run : ''
 
   .calc-body {
     padding-top: 2rem;
+  }
+  .calc-save {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px dotted var(--rule);
   }
 
   .calc-generic .calc-form {
@@ -841,19 +851,27 @@ const runBody = spec ? spec.run : ''
     font: inherit;
     font-family: var(--font-mono);
     font-feature-settings: 'tnum' 1, 'zero' 1;
-    padding: 0.5rem 0.6rem;
-    border: 1px solid var(--ink);
-    background: transparent;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--rule);
+    border-bottom: 3px solid color-mix(in oklab, var(--ink) 30%, var(--rule));
+    background: var(--paper-deep);
     color: var(--ink);
-    border-radius: 2px;
+    border-radius: 4px 4px 3px 3px;
+    text-align: right;
   }
+  .calc-field select { text-align: left; }
   .calc-field input:focus,
   .calc-field select:focus {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--credit);
     outline-offset: 1px;
+    border-color: var(--credit);
   }
   .calc-output {
     align-self: start;
+    background: var(--tape);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1rem 1.1rem;
   }
   .calc-results {
     border-collapse: collapse;
@@ -861,18 +879,27 @@ const runBody = spec ? spec.run : ''
   }
   .calc-results th,
   .calc-results td {
-    padding: 0.5rem 0.25rem;
+    padding: 0.45rem 0.25rem;
     text-align: left;
-    border-bottom: 1px dashed var(--ink-mute);
+    border-bottom: 1px dotted color-mix(in oklab, var(--rule) 80%, transparent);
     font-weight: 400;
+  }
+  .calc-results tr:last-child th,
+  .calc-results tr:last-child td {
+    border-bottom: 3px double var(--credit);
+    color: var(--credit);
+    font-weight: 600;
   }
   .calc-results th {
     color: var(--ink-mute);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-family: var(--font-sans);
   }
   .calc-results td {
     text-align: right;
     color: var(--ink);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums slashed-zero;
   }
   .calc-error {
     color: var(--accent);
@@ -943,4 +970,3 @@ const runBody = spec ? spec.run : ''
     }
   }
 </style>
-</content>

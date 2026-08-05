@@ -1,274 +1,266 @@
 @import 'tailwindcss';
 
 /*
- * oriz-finance — v2 graph-paper ledger tokens
+ * oriz-finance — "The Ready Reckoner"
  *
- * Surface = engineering-print white with a hair of green; a printed-graph
- * grid lives behind everything as fixed-attachment CSS background. Type =
- * Fraunces (H1 only) + Source Sans 3 (body) + JetBrains Mono (every
- * numeric, mandatory `tnum`, `zero`).
+ * Identity: a mechanical desk calculator + accountant's tally-roll. The
+ * characteristic artifact of the Indian shop-accountant / CA office is the
+ * paper adding-machine tape: a warm manila strip a print-head strikes one
+ * line at a time. That strip is the hero and the signature.
  *
- * Family-anchor mapping: --paper / --ink / --ink-mute / --rule are the
- * same names oriz-home uses; values diverge per the brief. --accent is the
- * graph teal (#0F766E). --debit (oxblood #9C2A2A) is finance's negative —
- * never decorative.
+ * NOT the previous graph-paper-teal ledger. Cooler manila surface, a wide
+ * stamped grotesque masthead, double-entry colour (teal credit / oxblood
+ * debit), and adding-machine mono numerals carry every figure.
+ *
+ * Type trio (deliberate, none the project defaults):
+ *   display  Archivo Expanded  — wide, stamped, mechanical (masthead only)
+ *   body     Public Sans       — utilitarian gov-form face (Indian tax forms)
+ *   mono     Spline Sans Mono  — adding-machine numerals, slashed zero
  */
 
 @theme {
   --font-display:
-    'Fraunces', 'GT Sectra', 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+    'Archivo Expanded', 'Archivo', 'Arial Narrow', system-ui, sans-serif;
   --font-sans:
-    'Source Sans 3', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:
+    'Spline Sans Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --container-spine: 1200px;
-  --container-prose: 720px;
+  --container-spine: 1160px;
+  --container-prose: 700px;
+}
+
+/*
+ * Unlayered override — the shared astro-shell tokens.css sets --font-display
+ * to Fraunces on a plain :root, which outranks Tailwind's layered @theme.
+ * Re-assert the Ready Reckoner faces at top specificity so they always win.
+ */
+:root {
+  --font-display: 'Archivo Expanded', 'Archivo', 'Arial Narrow', system-ui, sans-serif;
+  --font-sans: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Spline Sans Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @layer base {
   :root {
     color-scheme: light;
 
-    /* Graph-paper-light surface — engineering-print white with a hair of green. */
-    --paper: #f0f2ee;
-    --paper-deep: #e8ebe5;
-    --ink: #11201c; /* near-black with teal undertone */
-    --ink-mute: #5c6b66; /* assumption text, formula labels */
-    --rule: #c9b98a; /* hairline tan */
+    /* Manila tally-roll surface — warm paper, cooler than cream. */
+    --paper: #f2efe6;
+    --paper-deep: #e7e2d3; /* roll shadow / recessed panels */
+    --tape: #f7f4ea;       /* the printed strip, a hair lighter than paper */
+    --ink: #23262b;        /* graphite print, not black */
+    --ink-mute: #6a6d66;   /* labels, assumptions */
+    --rule: #cabf9f;       /* faint ruled line */
 
-    /* Token aliases used in the brief verbatim (so the spec snippets compile
-     * unchanged into this stylesheet). */
+    /* Double-entry colour — this is the whole point of a ledger. */
+    --credit: #0b6e63;     /* teal — totals, gains, focus ring, print head */
+    --debit: #8e2a2a;      /* oxblood — losses, tax owed, prepay saved */
+
+    /* Compatibility aliases so shared anchor patterns + shims compile. */
+    --accent: var(--credit);
+    --negative: var(--debit);
     --surface: var(--paper);
     --muted: var(--ink-mute);
-
-    --accent: #0f766e; /* graph teal — H1 underline, totals, focus ring */
-    --debit: #9c2a2a; /* oxblood — SEBI/IRDAI/RBI disclaimer, never decorative */
-    --negative: #b23a2a; /* losses, tax owed, overruns — never decorative */
-
-    /* Family-anchor compatibility tokens — name-mapped so anchor patterns
-     * pasted in (.toc-row, prose, page-head, [data-oriz-*]) just work. */
-    --mustard: var(--accent);
+    --mustard: var(--credit);
     --vermilion: var(--debit);
-    --ledger: var(--accent);
-    --highlighter: var(--accent);
+    --ledger: var(--credit);
+    --highlighter: var(--credit);
   }
 
-  /* Dark variant — recessed inversion, grid stays visible. */
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
-      --paper: #0e1614;
-      --paper-deep: #060c0b;
-      --ink: #e8ece8;
-      --ink-mute: #8a9994;
-      --rule: #6b5e3e;
-
+      --paper: #16181a;
+      --paper-deep: #0d0f10;
+      --tape: #1d2022;
+      --ink: #e9e6dc;
+      --ink-mute: #969a90;
+      --rule: #4c4a3d;
+      --credit: #4fd8c4;
+      --debit: #f08e86;
+      --accent: var(--credit);
+      --negative: var(--debit);
       --surface: var(--paper);
       --muted: var(--ink-mute);
-
-      --accent: #5eead4; /* lifted teal for contrast */
-      --debit: #f0817a;
-      --negative: #f0817a;
-
-      --mustard: var(--accent);
+      --mustard: var(--credit);
       --vermilion: var(--debit);
-      --ledger: var(--accent);
-      --highlighter: var(--accent);
+      --ledger: var(--credit);
+      --highlighter: var(--credit);
     }
   }
 
   html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-    font-feature-settings:
-      'kern' 1,
-      'liga' 1;
+    font-feature-settings: 'kern' 1, 'liga' 1;
   }
 
   /*
-   * THE GRAPH GRID — printed-graph background painted on the body.
-   *
-   * Three layers blended:
-   *   1) flat surface base
-   *   2) horizontal teal lines, every 8px, at 6%
-   *   3) vertical teal lines, every 8px, at 6%
-   *   4) horizontal MAJOR lines, every 40px, at 9% (= every 5th)
-   *   5) vertical   MAJOR lines, every 40px, at 9%
-   *
-   * `background-attachment: fixed` keeps the grid pinned to the viewport so
-   * scrolling reads as paper sliding under a fixed sheet — the brief is
-   * explicit on this.
+   * Surface = a manila desk-blotter with a single warm feed-hole margin
+   * down the left edge (the tally-roll's sprocket band) — quiet, not a
+   * full graph grid. Fixed so the page reads as one continuous sheet.
    */
   body {
-    background-color: var(--surface);
+    background-color: var(--paper);
     background-image:
-      repeating-linear-gradient(
-        0deg,
-        rgba(15, 118, 110, 0.09) 0 1px,
-        transparent 1px 40px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        rgba(15, 118, 110, 0.09) 0 1px,
-        transparent 1px 40px
-      ),
-      repeating-linear-gradient(
-        0deg,
-        rgba(15, 118, 110, 0.06) 0 1px,
-        transparent 1px 8px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        rgba(15, 118, 110, 0.06) 0 1px,
-        transparent 1px 8px
-      );
+      linear-gradient(90deg,
+        transparent 0 22px,
+        color-mix(in oklab, var(--rule) 42%, transparent) 22px 23px,
+        transparent 23px),
+      repeating-linear-gradient(0deg,
+        transparent 0 27px,
+        color-mix(in oklab, var(--rule) 16%, transparent) 27px 28px);
     background-attachment: fixed;
-    background-position: 0 0;
     color: var(--ink);
     font-family: var(--font-sans);
     font-size: 16px;
-    line-height: 1.625;
+    line-height: 1.6;
     overflow-y: scroll;
     margin: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Mono utility — disable ligatures, enable tabular numerals + slashed zero.
-   * The brief makes this MANDATORY on every numeric across the site. */
-  code,
-  kbd,
-  pre,
-  samp,
-  .mono,
-  .num {
+  code, kbd, pre, samp, .mono, .num {
     font-family: var(--font-mono);
-    font-feature-settings:
-      'tnum' 1,
-      'zero' 1,
-      'calt' 0;
+    font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
   }
-
-  .num {
-    font-variant-numeric: tabular-nums slashed-zero;
-  }
+  .num { font-variant-numeric: tabular-nums slashed-zero; }
 
   ::selection {
-    background: color-mix(in oklab, var(--accent) 30%, transparent);
+    background: color-mix(in oklab, var(--credit) 28%, transparent);
     color: var(--ink);
   }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+  a { color: inherit; text-decoration: none; }
 }
 
-/* ============================================================
- * Containers
- * ============================================================ */
+/* ============================================================ Containers */
 
 .spine {
   max-width: var(--container-spine);
   margin-inline: auto;
-  padding-inline: clamp(1.5rem, 4vw, 2rem);
+  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
 }
-
 .prose-spine {
   max-width: var(--container-prose);
   margin-inline: auto;
   padding-inline: clamp(1.5rem, 4vw, 2rem);
 }
-
-.hairline {
-  height: 1px;
-  background: var(--rule);
-  border: 0;
-  margin: 0;
-}
+.hairline { height: 1px; background: var(--rule); border: 0; margin: 0; }
 
 /* ============================================================
- * Signature 1 — Leader-dotted TOC.
+ * SIGNATURE — the paper tally-roll strip.
  *
- * Used on:
- *   - home catalogue (28 calculators × 4 ledgers)
- *   - calculator-page right column (assumptions list)
- *   - footer index column
- *   - footer family column
- *
- * Implementation per the brief: 3-col grid where the middle column carries
- * the dotted leader via a ::after pseudo. The leader is lifted to sit on
- * the x-height baseline so it reads like a printed index.
+ * A warm manila strip with serrated (perforated) top + bottom edges. Each
+ * result line is a `.tape-line` — key on the left, dotted leader, figure on
+ * the right in adding-machine mono. New lines strike in from the print head
+ * (one orchestrated motion moment; reduced-motion = instant).
  * ============================================================ */
 
-.toc-row {
+.tape {
+  position: relative;
+  background: var(--tape);
+  border-inline: 1px solid var(--rule);
+  padding: 1.25rem clamp(1rem, 3vw, 1.75rem) 1.5rem;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, #fff 40%, transparent),
+    0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent);
+}
+/* Serrated (tear-off) edges via a repeating conic mask on top + bottom. */
+.tape::before,
+.tape::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background:
+    repeating-conic-gradient(var(--paper) 0 25%, transparent 0 50%)
+      0 0 / 16px 16px;
+}
+.tape::before { top: -7px; }
+.tape::after { bottom: -7px; transform: scaleY(-1); }
+
+.tape-head {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin: 0 0 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tape-line {
   display: grid;
   grid-template-columns: max-content 1fr max-content;
   gap: 0.5rem;
   align-items: baseline;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: var(--ink);
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
+  padding-block: 0.3rem;
 }
-.toc-row::after {
+.tape-line + .tape-line { border-top: 1px dotted color-mix(in oklab, var(--rule) 70%, transparent); }
+.tape-line .k {
+  grid-column: 1;
+  color: var(--ink-mute);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  background: var(--tape);
+  padding-right: 0.35rem;
+}
+.tape-line::after {
   content: '';
-  border-bottom: 1px dotted var(--rule);
-  transform: translateY(-3px);
   grid-column: 2;
   grid-row: 1;
+  border-bottom: 1px dotted color-mix(in oklab, var(--rule) 80%, transparent);
+  transform: translateY(-4px);
 }
-.toc-row .toc-name {
-  grid-column: 1;
-  grid-row: 1;
-  background: var(--paper);
-  padding-right: 0.25rem;
-  position: relative;
-  z-index: 1;
-}
-.toc-row .toc-value {
+.tape-line .v {
   grid-column: 3;
   grid-row: 1;
-  background: var(--paper);
-  padding-left: 0.25rem;
-  position: relative;
-  z-index: 1;
+  text-align: right;
+  color: var(--ink);
+  font-size: 15px;
+  background: var(--tape);
+  padding-left: 0.35rem;
   font-variant-numeric: tabular-nums slashed-zero;
-  color: var(--ink-mute);
+}
+.tape-line.is-total .k,
+.tape-line.is-total .v { color: var(--credit); font-weight: 500; font-size: 17px; }
+.tape-line.is-total { border-top: 3px double var(--credit); margin-top: 0.35rem; padding-top: 0.6rem; }
+.tape-line.is-debit .v { color: var(--debit); }
+
+/* Print-head strike-in. Each line delays by its --i index. */
+@keyframes tape-strike {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tape[data-animate='true'] .tape-line {
+  animation: tape-strike 0.28s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
 }
 
-/* When the TOC row is itself an anchor — colour shifts on hover/focus. */
-a.toc-row {
-  text-decoration: none;
-  color: var(--ink);
-}
-a.toc-row:hover .toc-name,
-a.toc-row:focus-visible .toc-name {
-  color: var(--accent);
-}
-a.toc-row:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 4px;
+@media (prefers-reduced-motion: reduce) {
+  .tape[data-animate='true'] .tape-line { animation: none; }
 }
 
 /* ============================================================
- * Signature 2 — Double-rule totals row.
- *
- * `border-style: double` renders as `══` — the printed-ledger convention
- * for "this row is the sum." Used on year-by-year tables, tax-summary
- * final liability, EMI grand total.
+ * Double-rule totals row for HTML tables (year ledgers, tax summary).
  * ============================================================ */
-
-.totals td,
-.totals th {
-  border-top: 3px double var(--ink);
-  border-bottom: 3px double var(--ink);
+.totals td, .totals th {
+  border-top: 3px double var(--credit);
+  border-bottom: 3px double var(--credit);
   font-weight: 600;
   padding-block: 0.6rem;
+  color: var(--credit);
 }
 
-/* ============================================================
- * Page-head + prose — anchor pattern, repainted in finance tokens.
- * ============================================================ */
+/* ============================================================ Page head + prose */
 
 .page-head {
   padding-block: clamp(2rem, 6vw, 3rem) 1.25rem;
@@ -276,30 +268,23 @@ a.toc-row:focus-visible {
 }
 .page-head .eyebrow {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-size: 10px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-mute);
   margin: 0 0 0.875rem;
-  font-feature-settings:
-    'tnum' 1,
-    'zero' 1,
-    'calt' 0;
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
 }
-.page-head .eyebrow a {
-  color: var(--ink-mute);
-  text-decoration: none;
-}
-.page-head .eyebrow a:hover {
-  color: var(--accent);
-}
+.page-head .eyebrow a { color: var(--ink-mute); }
+.page-head .eyebrow a:hover { color: var(--credit); }
 .page-head h1 {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-variation-settings: 'opsz' 144, 'SOFT' 100;
-  font-size: clamp(2.25rem, 5vw, 3rem);
-  line-height: 1.05;
+  font-weight: 700;
+  font-stretch: expanded;
+  font-size: clamp(1.9rem, 4.5vw, 2.75rem);
+  line-height: 1.02;
   letter-spacing: -0.01em;
+  text-transform: uppercase;
   margin: 0;
   color: var(--ink);
 }
@@ -307,19 +292,16 @@ a.toc-row:focus-visible {
   margin: 1rem 0 0;
   color: var(--ink-mute);
   font-size: 1.0625rem;
-  max-width: 60ch;
+  max-width: 62ch;
 }
 .page-head .meta {
   margin: 0.75rem 0 0;
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-mute);
-  font-feature-settings:
-    'tnum' 1,
-    'zero' 1,
-    'calt' 0;
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
 }
 
 .prose {
@@ -329,53 +311,30 @@ a.toc-row:focus-visible {
   font-size: 1.0625rem;
   font-family: var(--font-sans);
 }
-.prose .lede {
-  font-size: 1.1875rem;
-  color: var(--ink);
-  margin: 0 0 2rem;
-}
+.prose .lede { font-size: 1.1875rem; color: var(--ink); margin: 0 0 2rem; }
 .prose h2 {
   font-family: var(--font-display);
-  font-weight: 500;
-  font-variation-settings: 'opsz' 36, 'SOFT' 50;
-  font-size: 1.5rem;
+  font-weight: 700;
+  font-stretch: expanded;
+  text-transform: uppercase;
+  font-size: 1.3rem;
   letter-spacing: -0.005em;
   color: var(--ink);
   margin: 2.5rem 0 1rem;
 }
-.prose h3 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 1.1875rem;
-  color: var(--ink);
-  margin: 1.75rem 0 0.625rem;
-}
-.prose p {
-  margin: 0 0 1.25rem;
-  color: var(--ink);
-}
+.prose h3 { font-family: var(--font-sans); font-weight: 700; font-size: 1.125rem; color: var(--ink); margin: 1.75rem 0 0.625rem; }
+.prose p { margin: 0 0 1.25rem; color: var(--ink); }
 .prose a {
-  color: var(--accent);
+  color: var(--credit);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  text-decoration-color: color-mix(in oklab, var(--accent) 50%, transparent);
+  text-decoration-color: color-mix(in oklab, var(--credit) 50%, transparent);
 }
-.prose a:hover {
-  text-decoration-color: var(--accent);
-}
-.prose strong {
-  color: var(--ink);
-  font-weight: 600;
-}
-.prose ul,
-.prose ol {
-  padding-left: 1.5rem;
-  margin: 0 0 1.25rem;
-}
-.prose li {
-  margin-bottom: 0.5rem;
-}
+.prose a:hover { text-decoration-color: var(--credit); }
+.prose strong { color: var(--ink); font-weight: 700; }
+.prose ul, .prose ol { padding-left: 1.5rem; margin: 0 0 1.25rem; }
+.prose li { margin-bottom: 0.5rem; }
 .prose code {
   font-family: var(--font-mono);
   font-size: 0.875em;
@@ -383,47 +342,21 @@ a.toc-row:focus-visible {
   background: color-mix(in oklab, var(--rule) 30%, transparent);
   color: var(--ink);
   border-radius: 0;
-  font-feature-settings:
-    'tnum' 1,
-    'zero' 1,
-    'calt' 0;
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
 }
-.prose blockquote {
-  border-left: 2px solid var(--rule);
-  padding-left: 1rem;
-  margin-left: 0;
-  color: var(--ink-mute);
-  font-style: italic;
-}
-.prose hr {
-  height: 1px;
-  background: var(--rule);
-  border: 0;
-  margin: 2.5rem 0;
-}
+.prose blockquote { border-left: 2px solid var(--rule); padding-left: 1rem; margin-left: 0; color: var(--ink-mute); font-style: italic; }
+.prose hr { height: 1px; background: var(--rule); border: 0; margin: 2.5rem 0; }
 
-/* Skip link — visually hidden until focused. */
 .skip-link {
   position: absolute;
   left: -9999px;
   top: 0;
-  background: var(--accent);
+  background: var(--credit);
   color: var(--paper);
   padding: 0.5rem 1rem;
   z-index: 100;
 }
-.skip-link:focus {
-  left: 0;
-}
+.skip-link:focus { left: 0; }
 
-/* ============================================================
- * Rupee glyph — sized 0.1em smaller than the digits beside it. The glyph
- * stays in Source Sans 3 so the seam against JetBrains Mono digits is
- * invisible at any size.
- * ============================================================ */
-.rupee {
-  font-family: var(--font-sans);
-  font-size: 0.9em;
-  margin-right: 0.12em;
-  color: inherit;
-}
+/* Rupee glyph — Public Sans, sized down so the seam against mono digits vanishes. */
+.rupee { font-family: var(--font-sans); font-size: 0.9em; margin-right: 0.1em; color: inherit; }

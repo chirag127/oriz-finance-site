@@ -4,7 +4,7 @@ export const SITE_CONFIG: OrizSiteConfig = {
   slug: 'finance',
   name: 'Finance',
   origin: 'https://finance.oriz.in',
-  tagline: 'SIP, EMI, FIRE, tax — calculators that show the math',
+  tagline: 'the ready reckoner — calculators that print the math',
   description:
     'Free, browser-only personal-finance calculators for India: SIP, lumpsum, step-up SIP, SWP, FIRE, EMI, FD, RD, PPF, NPS, take-home pay, HRA, GST. No sign-up. No data leaves your device.',
 }

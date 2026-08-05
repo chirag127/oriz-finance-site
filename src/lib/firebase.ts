@@ -1,15 +1,13 @@
 /**
- * Firebase singleton — every site in the oriz family initializes the same
- * project (oriz-app) so a logged-in user is logged in across every subdomain.
+ * Firebase singleton — Firestore ONLY. Clerk owns auth for the oriz family;
+ * Firebase here is the shared oriz-app Firestore where a signed-in user's
+ * saved calculator scenarios live, keyed by Clerk user id.
  *
- * Lazy proxy — Firebase code only runs when something dereferences a
- * property at runtime in the browser. Server-side prerender of pages that
- * import this module never crashes when env vars are missing on the build
- * runner, because no Firebase code actually fires unless a React island
- * touches the proxy.
+ * Lazy proxy — Firebase code only runs when a browser React island touches
+ * `db`. Server prerender never crashes when env vars are absent because no
+ * Firebase call fires until dereference.
  */
 import { type FirebaseApp, getApps, initializeApp } from 'firebase/app'
-import { type Auth, getAuth } from 'firebase/auth'
 import { type Firestore, getFirestore } from 'firebase/firestore'
 
 const config = {
@@ -22,7 +20,6 @@ const config = {
 }
 
 let _app: FirebaseApp | null = null
-let _auth: Auth | null = null
 let _db: Firestore | null = null
 
 function getApp(): FirebaseApp {
@@ -30,13 +27,6 @@ function getApp(): FirebaseApp {
   _app = getApps()[0] ?? initializeApp(config)
   return _app
 }
-
-export const auth: Auth = new Proxy({} as Auth, {
-  get(_t, p) {
-    if (!_auth) _auth = getAuth(getApp())
-    return Reflect.get(_auth, p)
-  },
-}) as Auth
 
 export const db: Firestore = new Proxy({} as Firestore, {
   get(_t, p) {

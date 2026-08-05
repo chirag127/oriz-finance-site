@@ -1,20 +1,18 @@
 ---
 /*
- * BaseLayout — per-app shell for oriz-finance.
+ * BaseLayout — per-app shell for oriz-finance "The Ready Reckoner".
  *
- * Sweep #5 revert (2026-06-22): Header is fully divergent per-app (restored
- * from f0676f6^ with its FOLIO/ISSUE strip + MultiSearch/StatusBanner).
- * Footer + Sidebar + BottomBar come from @chirag127/astro-chrome with
- * per-app slot content (AppSidebarContent + bottomBarActions).
+ * Uses shared @chirag127 chrome (tokens.css + Header/Sidebar/Footer/BottomBar)
+ * for MECHANISM; the LOOK is bespoke via ~/styles/global.css. Header + Wordmark
+ * are per-app. Auth = Clerk (public content never gated). Firestore stores
+ * saved scenarios keyed by Clerk user id.
  *
- * v2 graph-paper-light surface. Fonts: Fraunces (display, H1 only) +
- * Source Sans 3 (body) + JetBrains Mono (every numeric, mandatory tnum).
+ * Fonts: Archivo Expanded (display masthead) + Public Sans (body) + Spline
+ * Sans Mono (every figure, mandatory tnum + slashed zero).
  */
+import '@chirag127/astro-shell/tokens.css'
 import '~/styles/global.css'
 import '~/styles/oriz-ui-overrides.css'
-import '@chirag127/astro-shell/tokens.css'
-import FamilyChrome from '@chirag127/astro-shell/components/FamilyChrome.astro'
-import FamilySidebar from '@chirag127/astro-shell/components/FamilySidebar.astro'
 import BottomBar from '@chirag127/astro-chrome/BottomBar.astro'
 import ConsentBanner from '@chirag127/astro-chrome/ConsentBanner.astro'
 import Footer from '@chirag127/astro-chrome/Footer.astro'
@@ -30,7 +28,6 @@ interface Props {
   description?: string
   canonical?: string
   noindex?: boolean
-  /** Page-level JSON-LD blocks appended to the default Org+WebSite+Person triple. */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[]
 }
 
@@ -44,7 +41,6 @@ const {
 
 const adsenseClient = import.meta.env.PUBLIC_ADSENSE_CLIENT
 const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN
-const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
 ---
 
 <!doctype html>
@@ -64,7 +60,7 @@ const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
     <meta property="og:site_name" content={`${SITE_CONFIG.name} — oriz`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@chirag127" />
-    <meta name="theme-color" content="#F0F2EE" />
+    <meta name="theme-color" content="#F2EFE6" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
@@ -76,7 +72,7 @@ const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,30..100&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@600;700;800&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@400;500;600&display=swap"
     />
 
     <JsonLd extra={jsonLd} pageUrl={canonical} />
@@ -93,7 +89,7 @@ const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
     }
 
     {
-      cfAnalyticsEnabled && beaconToken && (
+      beaconToken && (
         <script
           is:inline
           defer
@@ -104,49 +100,27 @@ const cfAnalyticsEnabled = import.meta.env.PUBLIC_ENABLE_CF_ANALYTICS === 'true'
     }
   </head>
   <body>
-    <FamilyChrome slug="oriz-paisa-finance-tools-app" title="Finance" accent="#1f6b4a" />
     <a href="#main" class="skip-link">Skip to content</a>
     <Header />
-    <Sidebar>
-      <AppSidebarContent />
-    </Sidebar>
-    <main id="main">
-      <div class="oriz-shell">
-        <FamilySidebar slug="oriz-paisa-finance-tools-app" title="Finance Tools">
-          <a slot="tools" href="/calculators/sip/">SIP</a>
-          <a slot="tools" href="/calculators/lumpsum/">Lumpsum</a>
-          <a slot="tools" href="/calculators/step-up-sip/">Step-up SIP</a>
-          <a slot="tools" href="/calculators/swp/">SWP</a>
-          <a slot="tools" href="/calculators/cagr/">CAGR / XIRR</a>
-          <a slot="tools" href="/calculators/goal-planner/">Goal planner</a>
-          <a slot="tools" href="/calculators/fire/">FIRE</a>
-          <a slot="tools" href="/calculators/home-loan-emi/">Home loan EMI</a>
-          <a slot="tools" href="/calculators/car-loan/">Car loan</a>
-          <a slot="tools" href="/calculators/personal-loan/">Personal loan</a>
-          <a slot="tools" href="/calculators/prepayment-impact/">Prepayment impact</a>
-          <a slot="tools" href="/calculators/loan-comparison/">Loan comparison</a>
-          <a slot="tools" href="/calculators/eligibility-foir/">Eligibility / FOIR</a>
-          <a slot="tools" href="/calculators/fd/">FD</a>
-          <a slot="tools" href="/calculators/rd/">RD</a>
-          <a slot="tools" href="/calculators/ppf/">PPF</a>
-          <a slot="tools" href="/calculators/nps/">NPS</a>
-          <a slot="tools" href="/calculators/nsc/">NSC</a>
-          <a slot="tools" href="/calculators/ssy/">SSY</a>
-          <a slot="tools" href="/calculators/compound-interest/">Compound interest</a>
-          <a slot="tools" href="/calculators/savings-goal/">Savings goal</a>
-          <a slot="tools" href="/calculators/take-home/">Take-home (CTC)</a>
-          <a slot="tools" href="/calculators/tds/">TDS</a>
-          <a slot="tools" href="/calculators/hra/">HRA exemption</a>
-          <a slot="tools" href="/calculators/gratuity/">Gratuity</a>
-          <a slot="tools" href="/calculators/leave-encashment/">Leave encashment</a>
-          <a slot="tools" href="/calculators/gst/">GST</a>
-          <a slot="tools" href="/calculators/income-tax/">Income tax</a>
-        </FamilySidebar>
-        <div class="oriz-main"><slot /></div>
-      </div>
-    </main>
+    <div class="layout-body has-sidebar">
+      <Sidebar>
+        <AppSidebarContent />
+      </Sidebar>
+      <main id="main" class="layout-main"><slot /></main>
+    </div>
     <Footer />
     <BottomBar actions={bottomBarActions} />
     <ConsentBanner />
+
+    <style>
+      .layout-body { display: block; }
+      .layout-main { min-height: 50vh; }
+      .layout-body.has-sidebar { display: flex; align-items: flex-start; }
+      .layout-body.has-sidebar .layout-main { flex: 1 1 auto; min-width: 0; }
+      @media (max-width: 767px) {
+        .layout-body.has-sidebar { display: block; }
+        .layout-main { padding-bottom: 64px; }
+      }
+    </style>
   </body>
 </html>

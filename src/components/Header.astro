@@ -1,260 +1,137 @@
 ---
 /*
- * Header — the "issue strip" of the folio. Two rows, both full-width.
+ * Header — the desk-calculator's model plate. Two rows on a manila docket:
  *
- * Row 1 (mono caps small): `oriz · finance` left, `calc ▾   ⌘K   ☾   ⓘ` right
- * 2px tan rule between rows
- * Row 2 (uppercase, tracked +0.15em, --rule colour):
- *   FOLIO 002 · finance.oriz.in left, ISSUE MM / YYYY right
+ * Row 1: oriz.in wordmark (left) · controls (right): index ▾ · search · sign-in
+ * Row 2 (mono docket line): MODEL RR-28 · finance.oriz.in (left) · TAPE dd.mm.yyyy (right)
  *
- * Folio number = 002 because finance is site 002 in the family ordering.
- * Issue auto-set from build date.
- *
- * Family-anchor pattern: every site has its own header. This one omits a
- * traditional nav (the home page IS the navigation — a leader-dotted index
- * of every calculator), and the controls row carries 4 affordances:
- *   calc ▾   — anchor jump to the calculator catalogue on home
- *   ⌘K       — replaced by the <MultiSearch /> "Search the web" popover
- *   ☾        — placeholder theme toggle (relies on prefers-color-scheme)
- *   ⓘ        — link to /about/
- *
- * 2026-06-20 wiring:
- *   • <StatusBanner /> mounted above row 1 — renders nothing when no incident.
- *   • <MultiSearch /> mounted in the controls strip — replaces the inert ⌘K
- *     glyph with a working multi-engine "Search the web" popover.
+ * The home page IS the index, so there is no long nav — controls jump to the
+ * catalogue, open the multi-search popover, and expose Clerk sign-in.
+ * Auth is Clerk (public content ungated); StatusBanner from shared chrome.
  */
 import MultiSearch from '@chirag127/astro-chrome/MultiSearch'
 import StatusBanner from '@chirag127/astro-chrome/StatusBanner'
-
-interface Props {
-  /** Subtitle to show after `oriz ·`. Defaults to `finance`. */
-  section?: string
-}
-
-const { section = 'finance' } = Astro.props
+import AuthButton from '~/components/auth/AuthButton.tsx'
+import Wordmark from '~/components/Wordmark.astro'
 
 const now = new Date()
-const month = String(now.getMonth() + 1).padStart(2, '0')
-const year = now.getFullYear()
-const ISSUE_LINE = `ISSUE ${month} / ${year}`
-const FOLIO = 'FOLIO 002'
-const DOMAIN = 'finance.oriz.in'
+const dd = String(now.getDate()).padStart(2, '0')
+const mm = String(now.getMonth() + 1).padStart(2, '0')
+const yyyy = now.getFullYear()
+const TAPE = `TAPE ${dd}.${mm}.${yyyy}`
 ---
 
 <header class="hd">
-  {/* Status banner — renders nothing when no incident is live. */}
   <StatusBanner client:load siteId="finance" />
 
   <div class="hd-row hd-row-1 spine">
-    <a href="/" class="hd-mark mono">oriz · {section}</a>
+    <Wordmark size={30} href="https://oriz.in" />
     <nav class="hd-controls mono" aria-label="Header controls">
-      <a href="/#catalogue" class="hd-ctrl">calc&nbsp;▾</a>
+      <a href="/#index" class="hd-ctrl">index&nbsp;▾</a>
       <span class="hd-ctrl search-mount">
-        <MultiSearch client:idle titleSuffix=" — oriz" label="⌘K" />
+        <MultiSearch client:idle titleSuffix=" — oriz" label="search" />
       </span>
-      <span class="hd-ctrl hd-ctrl-mute" aria-hidden="true">☾</span>
-      <a href="/about/" class="hd-ctrl" aria-label="About">ⓘ</a>
+      <span class="hd-ctrl hd-auth"><AuthButton client:idle /></span>
     </nav>
   </div>
   <hr class="hd-rule" aria-hidden="true" />
   <div class="hd-row hd-row-2 spine">
-    <span class="hd-folio mono">{FOLIO} · {DOMAIN}</span>
-    <span class="hd-issue mono">{ISSUE_LINE}</span>
+    <span class="hd-model mono">MODEL RR-28 · finance.oriz.in</span>
+    <span class="hd-tape mono">{TAPE}</span>
   </div>
   <hr class="hairline" />
 </header>
 
 <style>
-  .hd {
-    background: transparent;
-    /* The header is intentionally NOT sticky — the page reads as a printed sheet. */
-  }
+  .hd { background: transparent; }
   .hd-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    height: 32px;
+    min-height: 40px;
   }
-  .hd-row-1 .hd-mark {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--ink);
-    font-weight: 500;
-    text-decoration: none;
-    font-feature-settings:
-      'tnum' 1,
-      'zero' 1,
-      'calt' 0;
-  }
-  .hd-row-1 .hd-mark:hover {
-    color: var(--accent);
-  }
+  .hd-row-1 { padding-block: 0.5rem; }
   .hd-controls {
     display: inline-flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1.1rem;
     font-family: var(--font-mono);
     font-size: 12px;
-    text-transform: lowercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     color: var(--ink);
-    font-feature-settings:
-      'tnum' 1,
-      'zero' 1,
-      'calt' 0;
   }
-  .hd-ctrl {
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .hd-ctrl:hover {
-    color: var(--accent);
-  }
-  .hd-ctrl-mute {
-    color: var(--ink-mute);
-    cursor: default;
-  }
-
-  /* The 2px tan rule between the two rows. */
-  .hd-rule {
-    height: 2px;
-    background: var(--rule);
-    border: 0;
-    margin: 0;
-  }
-
-  .hd-row-2 .hd-folio,
-  .hd-row-2 .hd-issue {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--ink-mute);
-    font-feature-settings:
-      'tnum' 1,
-      'zero' 1,
-      'calt' 0;
-  }
-
-  @media (max-width: 600px) {
-    .hd-controls {
-      gap: 0.75rem;
-    }
-    .hd-row-2 .hd-folio,
-    .hd-row-2 .hd-issue {
-      font-size: 10px;
-      letter-spacing: 0.1em;
-    }
-  }
-
-  /* ─── MultiSearch island (replaces the ⌘K glyph) ──────────────────────── */
-  .search-mount {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-  }
-  .search-mount :global([data-oriz-multisearch='trigger']) {
+  .hd-ctrl { color: var(--ink); }
+  .hd-ctrl:hover { color: var(--credit); }
+  .hd-auth { display: inline-flex; align-items: center; }
+  .hd-auth :global(.auth-signin) {
     background: transparent;
-    border: 0;
-    padding: 0;
+    border: 1px solid var(--rule);
     color: var(--ink);
     font: inherit;
     font-family: var(--font-mono);
     font-size: 12px;
-    text-transform: lowercase;
-    letter-spacing: 0.04em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
     cursor: pointer;
   }
-  .search-mount :global([data-oriz-multisearch='trigger']:hover) {
-    color: var(--accent);
-  }
-  .search-mount :global([data-oriz-multisearch='trigger']:focus-visible) {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .search-mount :global([data-oriz-multisearch='popover']) {
-    position: absolute;
-    right: 0;
-    top: calc(100% + 0.25rem);
-    background: var(--paper, #fff);
-    border: 1px solid var(--rule);
-    padding: 0.75rem;
-    z-index: 50;
-    min-width: 240px;
-    font-family: var(--font-sans);
-    font-size: 13px;
-  }
-  .search-mount :global([data-oriz-multisearch='query']) {
+  .hd-auth :global(.auth-signin:hover) { border-color: var(--credit); color: var(--credit); }
+  .hd-auth :global(.auth-signin:focus-visible) { outline: 2px solid var(--credit); outline-offset: 2px; }
+
+  .hd-rule { height: 2px; background: var(--rule); border: 0; margin: 0; }
+
+  .hd-row-2 { min-height: 26px; }
+  .hd-model, .hd-tape {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
     color: var(--ink-mute);
-    margin: 0 0 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--rule);
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 220px;
-  }
-  .search-mount :global([data-oriz-multisearch='list']) {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-  .search-mount :global([data-oriz-multisearch='engine']) {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    padding: 0.375rem 0.5rem;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .search-mount :global([data-oriz-multisearch='engine']:hover) {
-    background: color-mix(in oklab, var(--accent) 14%, transparent);
-    color: var(--accent);
-  }
-  .search-mount :global([data-oriz-multisearch='glyph']) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--ink-mute);
-    border: 1px solid var(--rule);
+    font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
   }
 
-  /* ─── Status banner — sites style via [data-oriz-status] ──────────────── */
+  @media (max-width: 600px) {
+    .hd-controls { gap: 0.7rem; }
+    .hd-model, .hd-tape { font-size: 9px; letter-spacing: 0.12em; }
+  }
+
+  /* MultiSearch popover — repainted in Ready Reckoner tokens. */
+  .search-mount { position: relative; display: inline-flex; align-items: center; }
+  .search-mount :global([data-oriz-multisearch='trigger']) {
+    background: transparent; border: 0; padding: 0; color: var(--ink);
+    font: inherit; font-family: var(--font-mono); font-size: 12px; cursor: pointer;
+  }
+  .search-mount :global([data-oriz-multisearch='trigger']:hover) { color: var(--credit); }
+  .search-mount :global([data-oriz-multisearch='trigger']:focus-visible) { outline: 2px solid var(--credit); outline-offset: 2px; }
+  .search-mount :global([data-oriz-multisearch='popover']) {
+    position: absolute; right: 0; top: calc(100% + 0.35rem);
+    background: var(--tape); border: 1px solid var(--rule);
+    padding: 0.75rem; z-index: 50; min-width: 240px;
+    font-family: var(--font-sans); font-size: 13px;
+    box-shadow: 0 6px 24px color-mix(in oklab, var(--ink) 14%, transparent);
+  }
+  .search-mount :global([data-oriz-multisearch='query']) {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-mute);
+    margin: 0 0 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--rule);
+    text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 220px;
+  }
+  .search-mount :global([data-oriz-multisearch='list']) { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.125rem; }
+  .search-mount :global([data-oriz-multisearch='engine']) { display: flex; align-items: center; gap: 0.625rem; padding: 0.375rem 0.5rem; color: var(--ink); }
+  .search-mount :global([data-oriz-multisearch='engine']:hover) { background: color-mix(in oklab, var(--credit) 14%, transparent); color: var(--credit); }
+  .search-mount :global([data-oriz-multisearch='glyph']) {
+    display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-mute); border: 1px solid var(--rule);
+  }
+
+  /* StatusBanner */
   :global([data-oriz-status]) {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-family: var(--font-sans);
-    font-size: 13px;
-    color: #fff;
-    background: var(--accent, #d97706);
-    justify-content: center;
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;
+    font-family: var(--font-sans); font-size: 13px; color: #fff;
+    background: var(--credit); justify-content: center;
   }
-  :global([data-oriz-status='partial_outage']) { background: #d97706; }
-  :global([data-oriz-status='major_outage']) { background: #b91c1c; }
-  :global([data-oriz-status='maintenance']) { background: var(--ink, #15110d); }
+  :global([data-oriz-status='partial_outage']) { background: #b8791f; }
+  :global([data-oriz-status='major_outage']) { background: var(--debit); }
+  :global([data-oriz-status='maintenance']) { background: var(--ink); }
   :global([data-oriz-status-link]) { color: inherit; text-decoration: underline; }
-  :global([data-oriz-status-dismiss]) {
-    margin-left: auto;
-    background: transparent;
-    border: 0;
-    color: inherit;
-    cursor: pointer;
-    font-size: 16px;
-    line-height: 1;
-    padding: 0 0.25rem;
-  }
+  :global([data-oriz-status-dismiss]) { margin-left: auto; background: transparent; border: 0; color: inherit; cursor: pointer; font-size: 16px; line-height: 1; padding: 0 0.25rem; }
 </style>

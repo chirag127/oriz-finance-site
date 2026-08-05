@@ -1,10 +1,11 @@
 /*
- * InlineSIPCalculator — the small live calculator that sits on the home
- * page. Three inputs (monthly amount, return %, years) → one big result
- * line in JetBrains Mono with a leader-dotted leader to the rupee value.
+ * The hero: a live SIP that prints onto a paper tally-roll. Left column =
+ * machine keys (three inputs). Right column = the manila tape; each computed
+ * line strikes in from the print head. Updates on every keystroke, no submit.
  *
- * The "hero" of the page. Updates on every keystroke. No submit button,
- * no scroll. Proves the site works without leaving the surface.
+ * The tape IS the signature element — every figure is Spline Sans Mono with
+ * tabular slashed-zero numerals; the rupee glyph stays in Public Sans so the
+ * seam vanishes. Totals get the teal double-rule.
  */
 import { type ChangeEvent, useMemo, useState } from 'react'
 import { calculateSIP } from '~/lib/finmath'
@@ -25,92 +26,48 @@ export default function InlineSIPCalculator() {
       set(Number.isFinite(v) && v >= 0 ? v : fallback)
     }
 
+  const lines: { k: string; v: number; cls?: string; i: number }[] = [
+    { k: `${monthly.toLocaleString('en-IN')} × ${years * 12} mo`, v: result.investedAmount, i: 0 },
+    { k: `growth @ ${rate.toFixed(1)}% p.a.`, v: result.wealthGained, i: 1 },
+    { k: 'corpus', v: result.totalValue, cls: 'is-total', i: 2 },
+  ]
+
   return (
     <div className="isip">
-      <div className="isip-inputs">
-        <label className="isip-field">
-          <span className="isip-label mono">Monthly investment (₹)</span>
-          <input
-            className="num isip-input"
-            type="number"
-            inputMode="numeric"
-            min={0}
-            step={500}
-            value={monthly}
-            onChange={onNumber(setMonthly, 0)}
-            aria-label="Monthly investment in rupees"
-          />
-        </label>
-        <label className="isip-field">
-          <span className="isip-label mono">Expected return (% p.a.)</span>
-          <input
-            className="num isip-input"
-            type="number"
-            inputMode="decimal"
-            min={0}
-            max={40}
-            step={0.5}
-            value={rate}
-            onChange={onNumber(setRate, 0)}
-            aria-label="Expected annual return percent"
-          />
-        </label>
-        <label className="isip-field">
-          <span className="isip-label mono">Tenure (years)</span>
-          <input
-            className="num isip-input"
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={50}
-            step={1}
-            value={years}
-            onChange={onNumber(setYears, 1)}
-            aria-label="Tenure in years"
-          />
-        </label>
+      <div className="isip-keys">
+        <Key label="Monthly ₹" value={monthly} step={500} min={0} onChange={onNumber(setMonthly, 0)} />
+        <Key label="Return % p.a." value={rate} step={0.5} min={0} max={40} onChange={onNumber(setRate, 0)} />
+        <Key label="Years" value={years} step={1} min={1} max={50} onChange={onNumber(setYears, 1)} />
+        <p className="isip-hint">
+          Runs in your browser. Nothing typed here leaves the page.
+        </p>
       </div>
 
-      {/*
-        The result line is the hero. Mono tabular nums for the digits, the
-        rupee glyph stays in Source Sans 3 sized 0.9em so the seam is
-        invisible. Leader-dotted line connects label to value — finance's
-        signature, mid-sentence.
-      */}
-      <div className="isip-result">
-        <div className="toc-row isip-toc">
-          <span className="toc-name isip-name">Final corpus</span>
-          <span className="toc-value isip-value">
-            <span className="rupee" aria-hidden="true">
-              ₹
-            </span>
-            <span className="num">{formatINR(result.totalValue)}</span>
-          </span>
-        </div>
-        <div className="toc-row isip-toc isip-toc-sub">
-          <span className="toc-name isip-name-sub">Invested</span>
-          <span className="toc-value isip-value-sub">
-            <span className="rupee" aria-hidden="true">
-              ₹
-            </span>
-            <span className="num">{formatINR(result.investedAmount)}</span>
-          </span>
-        </div>
-        <div className="toc-row isip-toc isip-toc-sub">
-          <span className="toc-name isip-name-sub">Wealth gained</span>
-          <span className="toc-value isip-value-sub">
-            <span className="rupee" aria-hidden="true">
-              ₹
-            </span>
-            <span className="num">{formatINR(result.wealthGained)}</span>
-          </span>
-        </div>
-        <p className="isip-caption mono">
-          {years} y &middot; {rate.toFixed(1)}% p.a. &middot; monthly compounding
+      {/* keyed on the three inputs so React remounts → the strike animation replays */}
+      <div className="tape" data-animate="true" key={`${monthly}-${rate}-${years}`}>
+        <p className="tape-head">
+          <span>SIP · READY RECKONER</span>
+          <span>RR-01</span>
         </p>
-        <p className="isip-link">
-          <a href="/calculators/sip/">Open the full SIP calculator with year-by-year ledger →</a>
+        {lines.map((ln) => (
+          <div
+            className={`tape-line${ln.cls ? ` ${ln.cls}` : ''}`}
+            style={{ '--i': ln.i } as React.CSSProperties}
+            key={ln.k}
+          >
+            <span className="k">{ln.k}</span>
+            <span className="v">
+              <span className="rupee" aria-hidden="true">₹</span>
+              <span className="num">{formatINR(ln.v).replace('₹', '')}</span>
+            </span>
+          </div>
+        ))}
+        <p className="tape-foot mono">
+          {years} y · {rate.toFixed(1)}% · monthly compounding
         </p>
+        <a className="tape-open" href="/calculators/sip/">
+          Open full SIP with year-by-year ledger →
+        </a>
       </div>
 
       <style>{`
@@ -118,102 +75,90 @@ export default function InlineSIPCalculator() {
           display: grid;
           grid-template-columns: 1fr;
           gap: 1.5rem;
-          padding: 1.5rem;
-          background: color-mix(in oklab, var(--paper) 92%, transparent);
-          border: 1px solid var(--rule);
+          align-items: start;
         }
-        @media (min-width: 760px) {
-          .isip {
-            grid-template-columns: 1fr 1.4fr;
-            gap: 2rem;
-          }
+        @media (min-width: 800px) {
+          .isip { grid-template-columns: 0.85fr 1.15fr; gap: 2.5rem; }
         }
-        .isip-inputs {
-          display: grid;
-          gap: 1rem;
-          align-content: start;
-        }
-        .isip-field {
-          display: flex;
-          flex-direction: column;
-          gap: 0.375rem;
-        }
-        .isip-label {
-          font-size: 11px;
-          text-transform: uppercase;
-          letter-spacing: 0.12em;
+        .isip-keys { display: grid; gap: 0.9rem; align-content: start; }
+        .isip-hint {
+          margin: 0.5rem 0 0;
+          font-size: 12px;
           color: var(--ink-mute);
+          line-height: 1.5;
         }
-        .isip-input {
-          height: 44px;
-          padding: 0 0.875rem;
-          background: var(--paper);
-          border: 1px solid var(--rule);
-          color: var(--ink);
-          font-size: 18px;
-          text-align: right;
-          font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
-        }
-        .isip-input:focus {
-          outline: 2px solid var(--accent);
-          outline-offset: -1px;
-          border-color: var(--accent);
-        }
-
-        .isip-result {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .isip-toc {
-          font-size: 18px;
-          line-height: 1.45;
-          align-items: baseline;
-        }
-        .isip-name {
-          font-family: var(--font-sans);
-          font-weight: 600;
-          color: var(--ink);
-          font-size: 18px;
-        }
-        .isip-value {
-          color: var(--accent);
-          font-size: 32px;
-          font-weight: 500;
-        }
-        @media (min-width: 760px) {
-          .isip-value { font-size: 40px; }
-        }
-        .isip-toc-sub .isip-name-sub {
-          font-family: var(--font-sans);
-          font-size: 14px;
-          color: var(--ink-mute);
-        }
-        .isip-toc-sub .isip-value-sub {
-          color: var(--ink);
-          font-size: 16px;
-        }
-        .isip-caption {
-          margin: 0.75rem 0 0;
-          font-size: 11px;
-          letter-spacing: 0.1em;
+        .tape-foot {
+          margin: 0.9rem 0 0;
+          font-size: 10px;
+          letter-spacing: 0.14em;
           text-transform: uppercase;
           color: var(--ink-mute);
         }
-        .isip-link {
-          margin: 0.75rem 0 0;
-          font-size: 14px;
-        }
-        .isip-link a {
-          color: var(--accent);
+        .tape-open {
+          display: inline-block;
+          margin-top: 0.6rem;
+          font-family: var(--font-sans);
+          font-size: 13px;
+          color: var(--credit);
           text-decoration: underline;
-          text-decoration-color: color-mix(in oklab, var(--accent) 50%, transparent);
+          text-decoration-color: color-mix(in oklab, var(--credit) 50%, transparent);
           text-underline-offset: 3px;
         }
-        .isip-link a:hover {
-          text-decoration-color: var(--accent);
-        }
+        .tape-open:hover { text-decoration-color: var(--credit); }
+        .tape-open:focus-visible { outline: 2px solid var(--credit); outline-offset: 2px; }
       `}</style>
     </div>
+  )
+}
+
+interface KeyProps {
+  label: string
+  value: number
+  step: number
+  min?: number
+  max?: number
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void
+}
+
+function Key({ label, value, step, min, max, onChange }: KeyProps) {
+  return (
+    <label className="key">
+      <span className="key-label mono">{label}</span>
+      <input
+        className="num key-input"
+        type="number"
+        inputMode="decimal"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={onChange}
+        aria-label={label}
+      />
+      <style>{`
+        .key { display: flex; flex-direction: column; gap: 0.3rem; }
+        .key-label {
+          font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-mute);
+        }
+        .key-input {
+          height: 46px;
+          padding: 0 0.9rem;
+          background: var(--paper-deep);
+          border: 1px solid var(--rule);
+          border-bottom: 3px solid color-mix(in oklab, var(--ink) 35%, var(--rule));
+          border-radius: 4px 4px 3px 3px;
+          color: var(--ink);
+          font-size: 19px;
+          text-align: right;
+          box-shadow: inset 0 1px 0 color-mix(in oklab, #fff 45%, transparent);
+          font-feature-settings: 'tnum' 1, 'zero' 1, 'calt' 0;
+        }
+        .key-input:focus {
+          outline: 2px solid var(--credit);
+          outline-offset: 1px;
+          border-color: var(--credit);
+        }
+      `}</style>
+    </label>
   )
 }

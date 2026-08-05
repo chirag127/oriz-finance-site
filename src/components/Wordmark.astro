@@ -1,119 +1,82 @@
 ---
 /*
- * Wordmark — `oriz` set in display serif with a teal hairline strike
- * through the `z` glyph (proofreader's deletion mark, repainted to graph
- * teal for the finance ledger). Family-anchor pattern from oriz-home; the
- * subtitle prop is rendered in the site's accent.
+ * Wordmark — "oriz.in" set as a stamped receipt header: the mark in the wide
+ * display grotesque, a mono "·in" suffix, and a teal double-underscore
+ * (the adding-machine total rule) struck beneath. Links to https://oriz.in.
+ * Themed to the Ready Reckoner palette; distinct from the old serif+strike.
  */
 
 interface Props {
   subtitle?: string
   size?: number
   href?: string | null
-  asHeading?: boolean
 }
 
-const { subtitle, size = 56, href = null, asHeading = false } = Astro.props
-const Tag = asHeading ? 'h1' : ('div' as const)
+const { subtitle, size = 40, href = 'https://oriz.in' } = Astro.props
 ---
 
-{
-  href ? (
-    <a class="wordmark-link" href={href} aria-label={subtitle ? `oriz / ${subtitle}` : 'oriz'}>
-      <Tag class="wordmark" style={`--wm-size: ${size}px;`}>
-        <span class="wordmark-mark">
-          <span class="wordmark-letter">o</span>
-          <span class="wordmark-letter">r</span>
-          <span class="wordmark-letter">i</span>
-          <span class="wordmark-letter wordmark-z">
-            z
-            <span class="wordmark-strike" aria-hidden="true" />
-          </span>
-        </span>
-        {subtitle && (
-          <>
-            <span class="wordmark-sep" aria-hidden="true">
-              /
-            </span>
-            <span class="wordmark-sub">{subtitle}</span>
-          </>
-        )}
-      </Tag>
-    </a>
-  ) : (
-    <Tag class="wordmark" style={`--wm-size: ${size}px;`}>
-      <span class="wordmark-mark">
-        <span class="wordmark-letter">o</span>
-        <span class="wordmark-letter">r</span>
-        <span class="wordmark-letter">i</span>
-        <span class="wordmark-letter wordmark-z">
-          z
-          <span class="wordmark-strike" aria-hidden="true" />
-        </span>
-      </span>
-      {subtitle && (
-        <>
-          <span class="wordmark-sep" aria-hidden="true">
-            /
-          </span>
-          <span class="wordmark-sub">{subtitle}</span>
-        </>
-      )}
-    </Tag>
-  )
-}
+<a
+  class="wm-link"
+  href={href ?? 'https://oriz.in'}
+  aria-label={subtitle ? `oriz.in / ${subtitle}` : 'oriz.in'}
+  style={`--wm-size: ${size}px;`}
+>
+  <span class="wm">
+    <span class="wm-mark">oriz</span><span class="wm-tld mono">.in</span>
+  </span>
+  {subtitle && <span class="wm-sub mono">{subtitle}</span>}
+</a>
 
 <style>
-  .wordmark-link {
-    display: inline-block;
+  .wm-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
     color: inherit;
     text-decoration: none;
   }
-  .wordmark {
+  .wm {
     display: inline-flex;
     align-items: baseline;
-    gap: 0.18em;
-    margin: 0;
+    position: relative;
+    padding-bottom: 0.14em;
+  }
+  .wm-mark {
     font-family: var(--font-display);
-    font-weight: 500;
-    font-variation-settings: 'opsz' 36, 'SOFT' 20;
-    font-size: var(--wm-size, 56px);
+    font-weight: 700;
+    font-stretch: expanded;
+    text-transform: uppercase;
+    font-size: var(--wm-size, 40px);
     line-height: 1;
-    letter-spacing: 0;
+    letter-spacing: -0.02em;
     color: var(--ink);
   }
-  .wordmark-mark {
-    display: inline-flex;
-    align-items: baseline;
-  }
-  .wordmark-letter {
-    position: relative;
-    display: inline-block;
-  }
-  .wordmark-z {
-    padding-inline: 0.15em;
-  }
-  .wordmark-strike {
-    position: absolute;
-    inset: 50% 0 auto 0;
-    height: 0.04em;
-    background: var(--accent);
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
-  @media (max-width: 480px) {
-    .wordmark-strike {
-      height: max(1px, 0.04em);
-    }
-  }
-  .wordmark-sep {
-    margin-inline: 0.18em 0.18em;
+  .wm-tld {
+    font-size: calc(var(--wm-size, 40px) * 0.42);
     color: var(--ink-mute);
-    font-weight: 400;
+    letter-spacing: 0;
+    margin-left: 0.08em;
   }
-  .wordmark-sub {
-    color: var(--accent);
-    font-style: italic;
-    font-weight: 400;
+  /* The teal double-rule "total" underscore. */
+  .wm::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    border-top: 1px solid var(--credit);
+    border-bottom: 1px solid var(--credit);
+  }
+  .wm-link:hover .wm-mark { color: var(--credit); }
+  .wm-link:focus-visible {
+    outline: 2px solid var(--credit);
+    outline-offset: 3px;
+  }
+  .wm-sub {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-mute);
   }
 </style>
