@@ -216,11 +216,12 @@ export default function SIPCalculator() {
       </section>
 
       <style>{`
-        .sipfull { display: grid; gap: 2.5rem; }
+        .sipfull { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
         .sipfull-slab {
           display: grid;
-          grid-template-columns: 1fr;
+          grid-template-columns: minmax(0, 1fr);
           gap: 2rem;
+          min-width: 0;
         }
         @media (min-width: 960px) {
           .sipfull-slab {
@@ -231,6 +232,7 @@ export default function SIPCalculator() {
         .sipfull-col {
           padding-bottom: 1.5rem;
           border-bottom: 1px solid var(--rule);
+          min-width: 0;
         }
         @media (min-width: 960px) {
           .sipfull-col {
@@ -416,7 +418,7 @@ function Field({
         aria-label={`${label} slider`}
       />
       <style>{`
-        .sipf-field { display: flex; flex-direction: column; gap: 0.375rem; margin-bottom: 1.25rem; }
+        .sipf-field { display: flex; flex-direction: column; gap: 0.375rem; margin-bottom: 1.25rem; min-width: 0; }
         .sipf-label {
           font-size: 11px;
           letter-spacing: 0.12em;
@@ -424,6 +426,9 @@ function Field({
           color: var(--ink-mute);
         }
         .sipf-input {
+          width: 100%;
+          box-sizing: border-box;
+          min-width: 0;
           height: 44px;
           padding: 0 0.875rem;
           background: var(--paper);
