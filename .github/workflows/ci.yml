@@ -15,14 +15,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'pnpm'
+          cache: 'npm'
 
-      - run: npm install
+      - run: npm install --legacy-peer-deps
 
       - name: Type Check
         continue-on-error: true
@@ -46,7 +44,7 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - run: npm install
+      - run: npm install --legacy-peer-deps
 
       - name: Unit Tests
         continue-on-error: true
