@@ -21,7 +21,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.5",
+    "@astrojs/react": "^6.0.2",
     "@astrojs/sitemap": "^3.2.0",
     "@chirag127/astro-chrome": "^0.1.5",
     "@chirag127/astro-data": "^0.1.1",
